@@ -339,9 +339,9 @@ def saveAttributes(comp,numberOfNodes,chromo,G,clusterPosition,diameter,outputFi
 		position=G.node[n]['position']
 		intensity=G.node[n]['intensity']
 		gene=G.node[n]['gene']
-		annot1=G.node[n]['ANNOTATION_1']
-		annot2=G.node[n]['ANNOTATION_2']
-		annot3=G.node[n]['ANNOTATION_3']
+		annot1=G.node[n]['ANNOTATION1']
+		annot2=G.node[n]['ANNOTATION2']
+		annot3=G.node[n]['ANNOTATION3']
 		if optGeneString!="":
 			if annot1==optGeneString:
 				numberOfNodesApp=numberOfNodesApp-1	
@@ -531,6 +531,7 @@ thr=long(options.thr)
 IS={}
 if options.extFile!="":
 	E=nx.Graph()
+print "extFile="+options.extFile
 expDict={}
 noIS={}
 maxVal={}
@@ -702,8 +703,8 @@ for chrNum in range(0,chrNumber+1):
 			dist=abs(IS1-IS2);
 			if (dist<thr):
 				sys.stdout.write("\rProcessing chromosome -> %i  " % int(chromo1+1))
-				graphs[chromo1].add_node(IS1,gene=nameIS1,ANNOTATION_1=annotation1,ANNOTATION_2=annotation2,ANNOTATION_3=annotation3,chromosome=str(chromo1+1),position=IS1pos,intensity=patientList1)
-				graphs[chromo2].add_node(IS2,gene=nameIS2,ANNOTATION_1=annotation4,ANNOTATION_2=annotation5,ANNOTATION_3=annotation6,chromosome=str(chromo2+1),position=IS2pos,intensity=patientList2)
+				graphs[chromo1].add_node(IS1,gene=nameIS1,ANNOTATION1=annotation1,ANNOTATION2=annotation2,ANNOTATION3=annotation3,chromosome=str(chromo1+1),position=IS1pos,intensity=patientList1)
+				graphs[chromo2].add_node(IS2,gene=nameIS2,ANNOTATION1=annotation4,ANNOTATION2=annotation5,ANNOTATION3=annotation6,chromosome=str(chromo2+1),position=IS2pos,intensity=patientList2)
 				#G.add_edge(long(IS[i]),long(IS[j]),weight=thr-dist)
 				graphs[chromo1].add_edge(IS1,IS2,weight=dist)
 				#print IS[i]+" "+IS[j]+"->"+str(dist)
@@ -741,14 +742,14 @@ for l in range(0,chrNumber):
 	expDict[l][position]=expDict[l][position]+nx.number_of_nodes(g)
 	clusterPosition=int(compPos-1000000000*l)+1
 	diameterCluster=int(listNodes[len(listNodes)-1]-listNodes[0])
-	order=nx.number_of_nodes(g)
+	order=nx.number_of_nodes(g)+g.number_of_selfloops()
 	if (order==1): order=2
 	[CISProb,CISValue,expectVal,S,newOrder]=saveAttributes(comp+1,order,l+1,g,clusterPosition,diameterCluster,outputFileColor,outputFile,options.noLowOrder,options.statistical,cisNumberOrder,numIS,options.cons,options.prob,options.thr,options.entropy,options.verbose,specieNumber,int(options.minStatNode),options.annot)
 	if CISProb>1: CISProb=1
 	if(options.extFile!="")and(not(options.statistical)):
 	    if (options.prob!="")and(float(options.prob)>=float(CISProb)): #and float(order>options.order):
-		[E.add_node(str(u),edata,entropy=Decimal(str(S)),CIS_Prob=CISProb,MAP_flag=CISValue,DIAMETER=diameterCluster,CIS_Position=clusterPosition,Node_Number=newOrder,CIS_expect=expectVal) for u,edata in g.nodes(data=True) if 'gene' in edata ]
-		[E.add_edge(str(u),str(v),edata,prob=CISProb,MAP=CISValue) for u,v,edata in g.edges(data=True) if 'weight' in edata ]
+		[E.add_node(str(u),edata,entropy=str(S),CISProb=str(CISProb),MAPflag=CISValue,DIAMETER=diameterCluster,CISPosition=clusterPosition,NodeNumber=newOrder,CISexpect=expectVal) for u,edata in g.nodes(data=True) if 'gene' in edata ]
+		[E.add_edge(str(u),str(v),edata,prob=str(CISProb),MAP=CISValue) for u,v,edata in g.edges(data=True) if 'weight' in edata ]
 	comp=comp+1	
 if not options.statistical:
     for i in range(0,chrNumber):
