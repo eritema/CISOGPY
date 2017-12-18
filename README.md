@@ -23,7 +23,7 @@ In order to proceed with the analysis with autoCIS, the data must be in the foll
 ---------------------------------------------------------------
 ```
 
-## Conda environement
+## Conda environement (osx)
 To build the appropriate conda env for autoCIS run the conda command
 ```
 conda create --name autoCIS --file spec-cisog.txt
